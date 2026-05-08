@@ -1,0 +1,159 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Model {
+  id                  String    @id @default(cuid())
+  name                String
+  organization        String
+  version             String?
+  description         String    @db.Text
+  parameters          String?
+  activeParameters    String?
+  architecture        String?
+  contextWindow       Int       @default(128000)
+  maxOutputTokens     Int       @default(4096)
+  trainingCutoff      String?
+  trainingTokens     String?
+  modalitiesInput     String[]  @default([])
+  modalitiesOutput    String[]  @default([])
+  languagesSupported String?
+  toolUse            String    @default("No")
+  systemPrompt       String    @default("Supported")
+  fineTuning         String    @default("Not available")
+  license           String
+  releaseDate        String?
+  organizationLink  String?
+  apiEndpoint       String?
+  huggingfaceRepo  String?
+  github           String?
+  paper            String?
+  vramBF16         String?
+  vramQ4           String?
+  quantizationFormats String[]  @default([])
+  selfHostable     Boolean   @default(false)
+  pricing          String?
+  strengths        String[]  @default([])
+  status           String    @default("Available")
+  isOpenSource     Boolean   @default(false)
+  family           String?
+  apiAvailable     Boolean   @default(true)
+  
+  benchmarkScores   BenchmarkScore[]
+  versions         ModelVersion[]
+  
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+  
+  @@index([organization])
+  @@index([license])
+  @@index([status])
+}
+
+model Benchmark {
+  id               String    @id @default(cuid())
+  name             String
+  shortName        String?
+  category        String
+  description     String    @db.Text
+  whyItMatters    String?  @db.Text
+  limitations     String?  @db.Text
+  methodologyUrl  String?
+  scoreType       String    @default("percentage")
+  higherIsBetter  Boolean   @default(true)
+  scaleMin        Float     @default(0)
+  scaleMax        Float     @default(100)
+  sourceUrl       String?
+  
+  scores          BenchmarkScore[]
+  
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  
+  @@index([category])
+}
+
+model BenchmarkScore {
+  id            String    @id @default(cuid())
+  modelId       String
+  benchmarkId   String
+  score         Float
+  runCount      Int       @default(1)
+  source        String    @default("Official")
+  evalDate      String?
+  
+  model         Model     @relation(fields: [modelId], references: [id], onDelete: Cascade)
+  benchmark     Benchmark @relation(fields: [benchmarkId], references: [id], onDelete: Cascade)
+  
+  createdAt     DateTime  @default(now())
+  
+  @@unique([modelId, benchmarkId])
+  @@index([modelId])
+  @@index([benchmarkId])
+}
+
+model ModelVersion {
+  id            String    @id @default(cuid())
+  modelId       String
+  version       String
+  releaseDate   String?
+  changelog     String?   @db.Text
+  deprecatedBy  String?
+  
+  model         Model     @relation(fields: [modelId], references: [id], onDelete: Cascade)
+  
+  createdAt     DateTime  @default(now())
+  
+  @@index([modelId])
+}
+
+model NewsItem {
+  id          String    @id @default(cuid())
+  title       String
+  summary     String    @db.Text
+  url         String
+  source      String
+  sourceIcon  String?
+  tags        String[]  @default([])
+  publishedAt DateTime
+  fetchedAt   DateTime  @default(now())
+  
+  @@index([publishedAt])
+  @@index([tags])
+}
+
+model SyncLog {
+  id            String    @id @default(cuid())
+  jobName       String
+  ranAt         DateTime  @default(now())
+  itemsUpdated Int       @default(0)
+  errors       String?   @db.Text
+  status       String    @default("success")
+}
+
+model Bookmark {
+  id        String   @id @default(cuid())
+  userId    String
+  type      String
+  itemId    String
+  createdAt DateTime @default(now())
+  
+  @@unique([userId, type, itemId])
+  @@index([userId])
+}
+
+model UserPreference {
+  id              String   @id @default(cuid())
+  userId          String   @unique
+  skillLevel     String?
+  bookmarks      String[] @default([])
+  recentViews    String[] @default([])
+  theme          String   @default("dark")
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
