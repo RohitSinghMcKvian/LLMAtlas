@@ -53,29 +53,8 @@ export default function Playground() {
       return
     }
     
-    try {
-      const items = await navigator.clipboard.read()
-      let hasImage = false
-      for (const item of items) {
-        for (const type of item.types) {
-          if (type.startsWith('image/')) {
-            hasImage = true
-            break
-          }
-        }
-      }
-      
-      if (hasImage) {
-        setImageError(`Image pasted! (Mock - API integration pending)`)
-        setTimeout(() => setImageError(null), 3000)
-      } else {
-        setImageError(`No image found in clipboard`)
-        setTimeout(() => setImageError(null), 2000)
-      }
-    } catch (err) {
-      setImageError(`Could not access clipboard. Allow clipboard access or paste an image first.`)
-      setTimeout(() => setImageError(null), 4000)
-    }
+    setImageError(`Image paste requires browser permissions. Try copying an image first.`)
+    setTimeout(() => setImageError(null), 3000)
   }
 
   const handleGenerate = async () => {
