@@ -1,6 +1,6 @@
 import { Paperclip } from 'lucide-react'
 import { motion } from 'framer-motion'
-import { useRef } from 'react'
+import { useRef, type ChangeEvent } from 'react'
 
 interface AttachmentButtonProps {
   onFilesSelected: (files: File[]) => void
@@ -15,8 +15,8 @@ export default function AttachmentButton({ onFilesSelected, disabled = false, at
     fileInputRef.current?.click()
   }
 
-  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = Array.from(e.target.files || [])
+  const handleFileSelect = (e: ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []) as File[]
     if (files.length > 0) {
       onFilesSelected(files)
     }
