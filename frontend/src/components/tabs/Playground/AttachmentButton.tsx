@@ -16,7 +16,7 @@ export default function AttachmentButton({ onFilesSelected, disabled = false, at
   }
 
   const handleFileSelect = (e: ChangeEvent<HTMLInputElement>) => {
-    const files = Array.from(e.target.files || [])
+    const files = Array.from(e.target.files || []) as File[]
     if (files.length > 0) {
       onFilesSelected(files)
     }
