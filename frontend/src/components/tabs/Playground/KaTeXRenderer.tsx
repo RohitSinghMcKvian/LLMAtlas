@@ -1,8 +1,10 @@
+import React from 'react'
 import 'katex/dist/katex.min.css'
 import { BlockMath, InlineMath } from 'react-katex'
 import { motion } from 'framer-motion'
 
 interface KaTeXRendererProps {
+  key?: React.Key
   math: string
   inline?: boolean
 }

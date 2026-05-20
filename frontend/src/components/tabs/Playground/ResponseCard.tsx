@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import React, { useState } from 'react'
 import { motion } from 'framer-motion'
 import { Copy, Check, RotateCcw, ThumbsUp, ThumbsDown, Loader2, Square, Volume2, VolumeX } from 'lucide-react'
 import MarkdownRenderer from './MarkdownRenderer'
@@ -7,6 +7,7 @@ import useTextToSpeech from '@/hooks/useTextToSpeech'
 import ErrorBoundary from './ErrorBoundary'
 
 interface ResponseCardProps {
+  key?: React.Key
   modelId: string
   modelName: string
   provider: string

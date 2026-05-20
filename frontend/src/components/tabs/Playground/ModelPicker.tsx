@@ -563,7 +563,7 @@ export default function ModelPicker({ models, selectedModels, onToggle, onSelect
             </button>
           </div>
         ) : (
-          Object.entries(groupedModels).map(([provider, providerModels]) => {
+          Object.entries(groupedModels).map(([provider, providerModels]: [string, Model[]]) => {
             const isExpanded = expandedProviders.has(provider)
             const allSelected = providerModels.every(m => selectedModels.includes(m.id))
             const someSelected = providerModels.some(m => selectedModels.includes(m.id))
