@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, type TouchEvent } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { NavLink, useLocation } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
@@ -47,11 +47,11 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
     setActivePath(location.pathname)
   }, [location.pathname])
 
-  const handleTouchStart = useCallback((e: TouchEvent<HTMLElement>) => {
+  const handleTouchStart = useCallback((e: React.TouchEvent<HTMLElement>) => {
     (e.target as HTMLElement).dataset.touchStartX = e.touches[0].clientX.toString()
   }, [])
 
-  const handleTouchEnd = useCallback((e: TouchEvent<HTMLElement>) => {
+  const handleTouchEnd = useCallback((e: React.TouchEvent<HTMLElement>) => {
     const startX = parseFloat((e.target as HTMLElement).dataset.touchStartX || '0')
     const endX = e.changedTouches[0].clientX
     if (endX - startX > 80) {

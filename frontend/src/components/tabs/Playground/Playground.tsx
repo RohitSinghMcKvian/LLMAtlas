@@ -96,7 +96,7 @@ export default function Playground() {
 
   useEffect(() => {
     return () => {
-      Object.values(abortControllersRef.current).forEach((c: AbortController) => c.abort())
+      Object.values(abortControllersRef.current).forEach(c => c.abort())
       if (saveTimeoutRef.current) clearTimeout(saveTimeoutRef.current)
     }
   }, [])
@@ -150,7 +150,7 @@ export default function Playground() {
 
   const saveConversation = useCallback(async () => {
     if (!user || messages.length === 0 || selectedModels.length === 0) return
-    if (Object.values(streamStates).some((s: StreamState) => s.isStreaming)) return
+    if (Object.values(streamStates).some(s => s.isStreaming)) return
 
     setIsSaving(true)
     try {
@@ -422,14 +422,14 @@ export default function Playground() {
     setShowSummary(false)
     setAttachments([])
     setShowAttachmentWarning(false)
-    Object.values(abortControllersRef.current).forEach((c: AbortController) => c.abort())
+    Object.values(abortControllersRef.current).forEach(c => c.abort())
     abortControllersRef.current = {}
     setIsLoading(false)
     localStorage.removeItem(ACTIVE_CONV_KEY)
   }
 
   const handleStopAll = () => {
-    Object.values(abortControllersRef.current).forEach((controller: AbortController) => {
+    Object.values(abortControllersRef.current).forEach(controller => {
       controller.abort()
     })
     

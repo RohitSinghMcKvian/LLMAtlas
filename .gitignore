@@ -35,3 +35,9 @@ coverage/
 
 # Misc
 *.pem
+
+# Prisma
+backend/prisma/dev.db
+backend/prisma/*.js
+backend/prisma/*.js.map
+backend/prisma/*.d.ts

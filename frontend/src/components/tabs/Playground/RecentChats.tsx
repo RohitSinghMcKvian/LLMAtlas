@@ -1,4 +1,4 @@
-import { useState, useEffect, type MouseEvent } from 'react'
+import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { 
   MessageSquare, Search, X, Trash2, Clock, Loader2, ChevronRight, Sparkles, Database, Cloud
@@ -77,7 +77,7 @@ export default function RecentChats({ isOpen, onClose, onSelect, onDelete, local
     }
   }
 
-  const handleDelete = async (id: string, e: MouseEvent) => {
+  const handleDelete = async (id: string, e: React.MouseEvent) => {
     e.stopPropagation()
     setDeletingId(id)
     try {

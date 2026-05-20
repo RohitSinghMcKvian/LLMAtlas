@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback, useEffect, useRef, type KeyboardEvent } from 'react'
+import { useState, useMemo, useCallback, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { 
   Search, X, Check, Zap, Brain, Code, Eye, 
@@ -207,7 +207,7 @@ export default function ModelPicker({ models, selectedModels, onToggle, onSelect
     onClose()
   }
 
-  const handleKeyDown = (e: KeyboardEvent) => {
+  const handleKeyDown = (e: React.KeyboardEvent) => {
     const visibleModels = filteredModels
     if (!visibleModels.length) return
 
@@ -563,7 +563,7 @@ export default function ModelPicker({ models, selectedModels, onToggle, onSelect
             </button>
           </div>
         ) : (
-          Object.entries(groupedModels).map(([provider, providerModels]: [string, Model[]]) => {
+          Object.entries(groupedModels).map(([provider, providerModels]) => {
             const isExpanded = expandedProviders.has(provider)
             const allSelected = providerModels.every(m => selectedModels.includes(m.id))
             const someSelected = providerModels.some(m => selectedModels.includes(m.id))

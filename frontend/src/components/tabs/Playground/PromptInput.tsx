@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, type KeyboardEvent, type DragEvent, type ClipboardEvent } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { Send, Loader2, Mic, MicOff, Upload } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import useSpeechRecognition from '@/hooks/useSpeechRecognition'
@@ -53,7 +53,7 @@ export default function PromptInput({
     }
   }, [transcript, isListening, onChange])
 
-  const handleKeyDown = (e: KeyboardEvent) => {
+  const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault()
       if (!isStreaming && value.trim()) {
@@ -70,30 +70,30 @@ export default function PromptInput({
     }
   }
 
-  const handleDragOver = (e: DragEvent) => {
+  const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault()
     e.stopPropagation()
     setIsDragOver(true)
   }
 
-  const handleDragLeave = (e: DragEvent) => {
+  const handleDragLeave = (e: React.DragEvent) => {
     e.preventDefault()
     e.stopPropagation()
     setIsDragOver(false)
   }
 
-  const handleDrop = (e: DragEvent) => {
+  const handleDrop = (e: React.DragEvent) => {
     e.preventDefault()
     e.stopPropagation()
     setIsDragOver(false)
     
-    const files = Array.from(e.dataTransfer.files) as File[]
+    const files = Array.from(e.dataTransfer.files)
     if (files.length > 0) {
       onFilesSelected(files)
     }
   }
 
-  const handlePaste = (e: ClipboardEvent) => {
+  const handlePaste = (e: React.ClipboardEvent) => {
     const items = e.clipboardData.items
     for (let i = 0; i < items.length; i++) {
       const item = items[i]

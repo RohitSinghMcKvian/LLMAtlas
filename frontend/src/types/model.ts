@@ -1,5 +1,5 @@
-export type ModelStatus = 'Available' | 'Beta' | 'Research Preview' | 'Announced' | 'Upcoming'
-export type LicenseType = 'Open Source' | 'Open' | 'Closed' | 'Gated' | 'Research'
+export type ModelStatus = 'Available' | 'Beta' | 'Research Preview' | 'Announced'
+export type LicenseType = 'Open Source' | 'Closed' | 'Gated' | 'Research'
 export type Modality = 'Text' | 'Image' | 'Audio' | 'Code' | 'Vision'
 
 export interface Model {
@@ -25,23 +25,6 @@ export interface Model {
   isOpenSource: boolean
   family: string
   version: string
-  toolUse?: string
-  modalitiesInput?: Modality[]
-  modalitiesOutput?: Modality[]
-  architecture?: string
-  maxOutputTokens?: number
-  trainingCutoff?: string
-  languagesSupported?: string
-  systemPrompt?: string
-  fineTuning?: string
-  vramBF16?: string
-  vramQ4?: string
-  selfHostable?: boolean
-  apiEndpoint?: string
-  huggingfaceRepo?: string
-  github?: string
-  strengths?: string[]
-  benchmarkScores?: any[]
 }
 
 export interface ModelFilter {
