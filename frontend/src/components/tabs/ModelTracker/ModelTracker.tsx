@@ -9,7 +9,7 @@ import Modal from '@/components/ui/Modal'
 import api from '@/lib/api'
 
 const statusMap: Record<ModelStatus, string> = {
-  Available: 'bg-emerald-400', Beta: 'bg-blue-400', 'Research Preview': 'bg-purple-400', Announced: 'bg-amber-400',
+  Available: 'bg-emerald-400', Beta: 'bg-blue-400', 'Research Preview': 'bg-purple-400', Announced: 'bg-amber-400', Upcoming: 'bg-gray-400',
 }
 
 export default function ModelTracker() {

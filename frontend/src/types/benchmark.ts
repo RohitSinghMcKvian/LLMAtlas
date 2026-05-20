@@ -19,6 +19,8 @@ export interface Benchmark {
   higherIsBetter: boolean
   scaleMin: number
   scaleMax: number
+  scores?: BenchmarkScore[]
+  methodologyUrl?: string
 }
 
 export interface BenchmarkScore {
