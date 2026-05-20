@@ -7,21 +7,24 @@ const FloatingCard: React.FC<{
   children: React.ReactNode
   className?: string
   delay?: number
+  style?: React.CSSProperties
 }> = ({
   children,
-  className = ''
+  className = '',
+  style
 }) => {
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 30 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.8, delay: 0.3, ease: 'easeOut' }}
-      className={`glass rounded-xl p-3 sm:p-4 ${className}`}
-    >
-      {children}
-    </motion.div>
-  )
-}
+    return (
+      <motion.div
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8, delay: 0.3, ease: 'easeOut' }}
+        className={`glass rounded-xl p-3 sm:p-4 ${className}`}
+        style={style}
+      >
+        {children}
+      </motion.div>
+    )
+  }
 
 function TypewriterText({ text, delay = 0 }: { text: string; delay?: number }) {
   const [displayed, setDisplayed] = useState('')
@@ -65,9 +68,9 @@ export default function MotionHero() {
   const y = useTransform(scrollYProgress, [0, 0.5], [0, -60])
 
   const stats = [
-    { icon: Brain, label: 'Models Tracked', value: '70+' },
-    { icon: Globe, label: 'Organizations', value: '20+' },
-    { icon: Zap, label: 'Benchmarks', value: '50+' },
+    { icon: Brain, label: 'Models Tracked', value: '150+' },
+    { icon: Globe, label: 'Providers', value: '12+' },
+    { icon: Zap, label: 'Organizations', value: '30+' },
     { icon: Sparkles, label: 'Daily Updates', value: 'Live' },
   ]
 
@@ -91,7 +94,7 @@ export default function MotionHero() {
       <div className="absolute inset-0 bg-black/40 z-10" />
       <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-black/60 z-10" />
 
-      <div className="relative z-20 max-w-7xl mx-auto px-6 pt-32 pb-40 py-[90px]">
+      <div className="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 pt-16 sm:pt-20 pb-32 sm:pb-40">
         <div className="grid lg:grid-cols-2 gap-8 sm:gap-12 items-center">
           <div className="space-y-6 sm:space-y-8 text-center lg:text-left">
             <motion.div
@@ -102,7 +105,7 @@ export default function MotionHero() {
               style={{ color: 'hsl(var(--foreground))' }}
             >
               <Sparkles size={12} className="text-cyan-glow" />
-              <span>The Complete LLM Intelligence Platform</span>
+              <TypewriterText text="The Complete LLM Intelligence Platform" delay={500} />
             </motion.div>
 
             <motion.h1
@@ -136,11 +139,12 @@ export default function MotionHero() {
               className="flex flex-wrap gap-3 justify-center lg:justify-start"
             >
               <Link
-                to="/models"
+                to="/playground"
+                state={{ scrollToSuggestions: true }}
                 className="liquid-glass rounded-full px-14 py-5 text-base hover:scale-[1.03] transition-transform cursor-pointer"
                 style={{ color: 'hsl(var(--foreground))' }}
               >
-                Explore Models
+                Explore Playground
               </Link>
               <Link
                 to="/compare"
@@ -175,10 +179,11 @@ export default function MotionHero() {
             </motion.div>
           </div>
 
-          <div className="relative hidden lg:block h-[500px] xl:h-[600px]">
+          <div className="relative hidden sm:block h-[650px] xl:h-[750px]">
             <FloatingCard
-              className="absolute top-0 right-0 w-64 animate-float"
+              className="absolute w-64 animate-float"
               delay={0.3}
+              style={{ top: '0px', right: '10px', zIndex: 10 }}
             >
               <div className="flex items-center gap-3 mb-3">
                 <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-green-500/20 to-emerald-500/20 flex items-center justify-center">
@@ -197,8 +202,30 @@ export default function MotionHero() {
             </FloatingCard>
 
             <FloatingCard
-              className="absolute top-32 left-0 w-56 animate-float-delayed"
+              className="absolute w-56 animate-float-delayed"
               delay={0.5}
+              style={{ top: '100px', left: '0', zIndex: 20 }}
+            >
+              <div className="flex items-center gap-3 mb-3">
+                <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-rose-500/20 to-red-500/20 flex items-center justify-center">
+                  <CircuitBoard size={20} className="text-rose-400" />
+                </div>
+                <div>
+                  <div className="text-sm font-semibold text-surface-200">Claude Mythos</div>
+                  <div className="text-xs text-surface-500">Anthropic</div>
+                </div>
+              </div>
+              <div className="text-xs text-surface-400">10T parameter MoE. 1M token context. Project Glasswing cybersecurity specialist.</div>
+              <div className="mt-2 flex gap-1">
+                <span className="px-2 py-0.5 rounded-full bg-rose-500/10 text-rose-300 text-[10px]">Preview</span>
+                <span className="px-2 py-0.5 rounded-full bg-purple-500/10 text-purple-300 text-[10px]">Gated</span>
+              </div>
+            </FloatingCard>
+
+            <FloatingCard
+              className="absolute hidden md:block w-56 animate-float"
+              delay={0.7}
+              style={{ top: '200px', right: '20px', zIndex: 30 }}
             >
               <div className="flex items-center gap-3 mb-3">
                 <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-purple-500/20 to-pink-500/20 flex items-center justify-center">
@@ -213,8 +240,9 @@ export default function MotionHero() {
             </FloatingCard>
 
             <FloatingCard
-              className="absolute top-48 right-12 w-60 animate-float"
-              delay={0.7}
+              className="absolute hidden md:block w-60 animate-float-delayed"
+              delay={0.9}
+              style={{ top: '300px', left: '10px', zIndex: 40 }}
             >
               <div className="flex items-center gap-3 mb-3">
                 <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-500/20 to-cyan-500/20 flex items-center justify-center">
@@ -229,38 +257,43 @@ export default function MotionHero() {
             </FloatingCard>
 
             <FloatingCard
-              className="absolute bottom-24 left-8 w-52 animate-float-delayed"
-              delay={0.9}
+              className="absolute hidden lg:block w-56 animate-float"
+              delay={1.1}
+              style={{ top: '400px', right: '10px', zIndex: 50 }}
             >
               <div className="flex items-center gap-3 mb-3">
-                <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-amber-500/20 to-orange-500/20 flex items-center justify-center">
-                  <CpuIcon size={20} className="text-amber-400" />
+                <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-violet-500/20 to-purple-500/20 flex items-center justify-center">
+                  <CpuIcon size={20} className="text-violet-400" />
                 </div>
                 <div>
-                  <div className="text-sm font-semibold text-surface-200">DeepSeek V4 Pro</div>
-                  <div className="text-xs text-surface-500">DeepSeek AI</div>
+                  <div className="text-sm font-semibold text-surface-200">Kimi 2.6</div>
+                  <div className="text-xs text-surface-500">Moonshot AI</div>
                 </div>
               </div>
-              <div className="text-xs text-surface-400">1T param open-source MoE. Frontier performance at fraction of cost.</div>
+              <div className="text-xs text-surface-400">2M token context. Frontier reasoning with native multimodal understanding.</div>
               <div className="mt-2 flex gap-1">
                 <span className="px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-300 text-[10px]">Open Source</span>
               </div>
             </FloatingCard>
 
             <FloatingCard
-              className="absolute bottom-8 right-4 w-56 animate-float"
-              delay={1.1}
+              className="absolute hidden lg:block w-52 animate-float-delayed"
+              delay={1.3}
+              style={{ top: '500px', left: '20px', zIndex: 60 }}
             >
               <div className="flex items-center gap-3 mb-3">
-                <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-rose-500/20 to-red-500/20 flex items-center justify-center">
-                  <CircuitBoard size={20} className="text-rose-400" />
+                <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-500/20 to-indigo-500/20 flex items-center justify-center">
+                  <Sparkles size={20} className="text-blue-400" />
                 </div>
                 <div>
-                  <div className="text-sm font-semibold text-surface-200">Mythos</div>
-                  <div className="text-xs text-surface-500">Sakana AI</div>
+                  <div className="text-sm font-semibold text-surface-200">DeepSeek V4 Pro</div>
+                  <div className="text-xs text-surface-500">DeepSeek AI</div>
                 </div>
               </div>
-              <div className="text-xs text-surface-400">Self-evolving architecture. 800B reasoning specialist with auto-retrain.</div>
+              <div className="text-xs text-surface-400">1.6T param MoE. 128K context. Frontier reasoning at fraction of cost.</div>
+              <div className="mt-2 flex gap-1">
+                <span className="px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-300 text-[10px]">Open Source</span>
+              </div>
             </FloatingCard>
           </div>
         </div>

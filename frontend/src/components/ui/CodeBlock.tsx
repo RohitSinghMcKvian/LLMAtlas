@@ -1,12 +1,12 @@
-import { useState, useCallback } from "react";
-import { Copy, Check } from "lucide-react";
+import { useState, useCallback } from "react"
+import { Copy, Check } from "lucide-react"
 
 export interface CodeBlockProps {
-  code: string;
-  language?: string;
-  showLineNumbers?: boolean;
-  maxHeight?: number;
-  onCopy?: () => void;
+  code: string
+  language?: string
+  showLineNumbers?: boolean
+  maxHeight?: number
+  onCopy?: () => void
 }
 
 export default function CodeBlock({
@@ -16,17 +16,17 @@ export default function CodeBlock({
   maxHeight = 400,
   onCopy,
 }: CodeBlockProps) {
-  const [copied, setCopied] = useState(false);
+  const [copied, setCopied] = useState(false)
 
   const handleCopy = useCallback(() => {
     navigator.clipboard.writeText(code).then(() => {
-      setCopied(true);
-      onCopy?.();
-      setTimeout(() => setCopied(false), 2000);
-    });
-  }, [code, onCopy]);
+      setCopied(true)
+      onCopy?.()
+      setTimeout(() => setCopied(false), 2000)
+    })
+  }, [code, onCopy])
 
-  const lines = code.split("\n");
+  const lines = code.split("\n")
 
   return (
     <div className="group relative rounded-xl glass overflow-hidden">
@@ -73,5 +73,5 @@ export default function CodeBlock({
         </pre>
       </div>
     </div>
-  );
+  )
 }

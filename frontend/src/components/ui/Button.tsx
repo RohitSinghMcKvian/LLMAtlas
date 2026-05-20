@@ -1,14 +1,14 @@
-import type { ButtonHTMLAttributes, ReactNode } from "react";
-import { Loader2 } from "lucide-react";
+import type { ButtonHTMLAttributes, ReactNode } from "react"
+import { Loader2 } from "lucide-react"
 
 export interface ButtonProps
   extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, "type"> {
-  children?: ReactNode;
-  key?: string | number;
-  variant?: "primary" | "secondary" | "ghost" | "danger";
-  size?: "sm" | "md" | "lg";
-  loading?: boolean;
-  type?: "button" | "submit" | "reset";
+  children?: ReactNode
+  key?: string | number
+  variant?: "primary" | "secondary" | "ghost" | "danger"
+  size?: "sm" | "md" | "lg"
+  loading?: boolean
+  type?: "button" | "submit" | "reset"
 }
 
 const variantStyles: Record<NonNullable<ButtonProps["variant"]>, string> = {
@@ -20,13 +20,13 @@ const variantStyles: Record<NonNullable<ButtonProps["variant"]>, string> = {
     "text-surface-400 hover:text-surface-200 hover:bg-white/[0.04] active:scale-[0.97]",
   danger:
     "bg-red-500/90 text-white shadow-md shadow-red-500/20 hover:bg-red-600 hover:shadow-lg hover:shadow-red-500/25 active:scale-[0.97]",
-};
+}
 
 const sizeStyles: Record<NonNullable<ButtonProps["size"]>, string> = {
   sm: "px-3 py-1.5 text-sm gap-1.5",
   md: "px-5 py-2.5 text-sm gap-2",
   lg: "px-6 py-3 text-base gap-2",
-};
+}
 
 export default function Button({
   children,
@@ -50,5 +50,5 @@ export default function Button({
       )}
       {children}
     </button>
-  );
+  )
 }

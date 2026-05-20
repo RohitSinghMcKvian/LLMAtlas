@@ -4,14 +4,15 @@ import { PrismaClient } from '@prisma/client'
 const router = Router()
 const prisma = new PrismaClient()
 
-// Get all news with filtering
 router.get('/', async (req, res) => {
   try {
     const { tag, source, from, to } = req.query
     
     const where: any = {}
     
-    if (tag) where.tags = { has: tag as string }
+    if (tag) {
+      where.tags = { contains: `"${tag}"` }
+    }
     if (source) where.source = source as string
     if (from || to) {
       where.publishedAt = {}
@@ -25,14 +26,20 @@ router.get('/', async (req, res) => {
       take: 50
     })
 
-    res.json(news)
+    const formatted = news.map(n => ({
+      ...n,
+      tags: (() => {
+        try { return JSON.parse(n.tags) } catch { return [] }
+      })()
+    }))
+
+    res.json(formatted)
   } catch (error) {
     console.error('Error fetching news:', error)
     res.status(500).json({ error: 'Failed to fetch news' })
   }
 })
 
-// Get available tags
 router.get('/meta/tags', async (req, res) => {
   try {
     const newsItems = await prisma.newsItem.findMany({
@@ -40,7 +47,12 @@ router.get('/meta/tags', async (req, res) => {
     })
     
     const allTags = new Set<string>()
-    newsItems.forEach(n => n.tags.forEach(t => allTags.add(t)))
+    newsItems.forEach(n => {
+      try {
+        const tags = JSON.parse(n.tags)
+        tags.forEach((t: string) => allTags.add(t))
+      } catch {}
+    })
     
     res.json(Array.from(allTags))
   } catch (error) {

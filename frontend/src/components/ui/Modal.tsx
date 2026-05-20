@@ -1,15 +1,15 @@
-import type { ReactNode } from "react";
-import { useEffect, useCallback } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { X } from "lucide-react";
+import type { ReactNode } from "react"
+import { useEffect, useCallback } from "react"
+import { motion, AnimatePresence } from "framer-motion"
+import { X } from "lucide-react"
 
 export interface ModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  title: string;
-  children?: ReactNode;
-  key?: string | number;
-  size?: "sm" | "md" | "lg" | "xl";
+  isOpen: boolean
+  onClose: () => void
+  title: string
+  children?: ReactNode
+  key?: string | number
+  size?: "sm" | "md" | "lg" | "xl"
 }
 
 const sizeStyles: Record<NonNullable<ModalProps["size"]>, string> = {
@@ -17,12 +17,12 @@ const sizeStyles: Record<NonNullable<ModalProps["size"]>, string> = {
   md: "max-w-md",
   lg: "max-w-lg",
   xl: "max-w-xl",
-};
+}
 
 const overlayVariants = {
   hidden: { opacity: 0 },
   visible: { opacity: 1 },
-};
+}
 
 const panelVariants = {
   hidden: { opacity: 0, scale: 0.95, y: 20 },
@@ -33,7 +33,7 @@ const panelVariants = {
     transition: { type: "spring" as const, stiffness: 300, damping: 25 },
   },
   exit: { opacity: 0, scale: 0.95, y: 20, transition: { duration: 0.15 } },
-};
+}
 
 export default function Modal({
   isOpen,
@@ -44,21 +44,21 @@ export default function Modal({
 }: ModalProps) {
   const handleEscape = useCallback(
     (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
+      if (e.key === "Escape") onClose()
     },
     [onClose],
-  );
+  )
 
   useEffect(() => {
     if (isOpen) {
-      document.addEventListener("keydown", handleEscape);
-      document.body.style.overflow = "hidden";
+      document.addEventListener("keydown", handleEscape)
+      document.body.style.overflow = "hidden"
     }
     return () => {
-      document.removeEventListener("keydown", handleEscape);
-      document.body.style.overflow = "";
-    };
-  }, [isOpen, handleEscape]);
+      document.removeEventListener("keydown", handleEscape)
+      document.body.style.overflow = ""
+    }
+  }, [isOpen, handleEscape])
 
   return (
     <AnimatePresence>
@@ -96,5 +96,5 @@ export default function Modal({
         </div>
       )}
     </AnimatePresence>
-  );
+  )
 }

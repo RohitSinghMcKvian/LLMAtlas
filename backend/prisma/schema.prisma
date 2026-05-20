@@ -3,8 +3,51 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model User {
+  id            String   @id @default(cuid())
+  email         String   @unique
+  name          String?
+  password      String
+  avatarUrl     String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  
+  conversations Conversation[]
+  preferences   UserPreference?
+  bookmarks     Bookmark[]
+}
+
+model Conversation {
+  id        String   @id @default(cuid())
+  userId    String
+  title     String
+  models    String   @default("[]")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  messages  Message[]
+  
+  @@index([userId])
+  @@index([updatedAt])
+}
+
+model Message {
+  id             String       @id @default(cuid())
+  conversationId String
+  role           String
+  content        String
+  modelId        String?
+  order          Int
+  
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  
+  @@index([conversationId])
+  @@index([order])
 }
 
 model Model {
@@ -12,7 +55,7 @@ model Model {
   name                String
   organization        String
   version             String?
-  description         String    @db.Text
+  description         String
   parameters          String?
   activeParameters    String?
   architecture        String?
@@ -20,8 +63,8 @@ model Model {
   maxOutputTokens     Int       @default(4096)
   trainingCutoff      String?
   trainingTokens     String?
-  modalitiesInput     String[]  @default([])
-  modalitiesOutput    String[]  @default([])
+  modalitiesInput     String    @default("[]")
+  modalitiesOutput    String    @default("[]")
   languagesSupported String?
   toolUse            String    @default("No")
   systemPrompt       String    @default("Supported")
@@ -35,14 +78,23 @@ model Model {
   paper            String?
   vramBF16         String?
   vramQ4           String?
-  quantizationFormats String[]  @default([])
+  quantizationFormats String    @default("[]")
   selfHostable     Boolean   @default(false)
   pricing          String?
-  strengths        String[]  @default([])
+  strengths        String    @default("[]")
   status           String    @default("Available")
   isOpenSource     Boolean   @default(false)
   family           String?
   apiAvailable     Boolean   @default(true)
+  
+  openrouterId      String?
+  hfDownloads       Int       @default(0)
+  hfLikes           Int       @default(0)
+  hfTags            String    @default("[]")
+  pricingInput      Float?
+  pricingOutput     Float?
+  libraryName       String?
+  pipelineTag       String?
   
   benchmarkScores   BenchmarkScore[]
   versions         ModelVersion[]
@@ -60,9 +112,9 @@ model Benchmark {
   name             String
   shortName        String?
   category        String
-  description     String    @db.Text
-  whyItMatters    String?  @db.Text
-  limitations     String?  @db.Text
+  description     String
+  whyItMatters    String
+  limitations     String
   methodologyUrl  String?
   scoreType       String    @default("percentage")
   higherIsBetter  Boolean   @default(true)
@@ -102,7 +154,7 @@ model ModelVersion {
   modelId       String
   version       String
   releaseDate   String?
-  changelog     String?   @db.Text
+  changelog     String?
   deprecatedBy  String?
   
   model         Model     @relation(fields: [modelId], references: [id], onDelete: Cascade)
@@ -115,16 +167,15 @@ model ModelVersion {
 model NewsItem {
   id          String    @id @default(cuid())
   title       String
-  summary     String    @db.Text
+  summary     String
   url         String
   source      String
   sourceIcon  String?
-  tags        String[]  @default([])
+  tags        String    @default("[]")
   publishedAt DateTime
   fetchedAt   DateTime  @default(now())
   
   @@index([publishedAt])
-  @@index([tags])
 }
 
 model SyncLog {
@@ -132,7 +183,7 @@ model SyncLog {
   jobName       String
   ranAt         DateTime  @default(now())
   itemsUpdated Int       @default(0)
-  errors       String?   @db.Text
+  errors       String?
   status       String    @default("success")
 }
 
@@ -143,6 +194,8 @@ model Bookmark {
   itemId    String
   createdAt DateTime @default(now())
   
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
   @@unique([userId, type, itemId])
   @@index([userId])
 }
@@ -151,9 +204,31 @@ model UserPreference {
   id              String   @id @default(cuid())
   userId          String   @unique
   skillLevel     String?
-  bookmarks      String[] @default([])
-  recentViews    String[] @default([])
+  bookmarks      String    @default("[]")
+  recentViews    String    @default("[]")
   theme          String   @default("dark")
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
+  
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model LeaderboardEntry {
+  id          String   @id @default(cuid())
+  modelName   String
+  modelId     String?
+  organization String
+  category    String   @default("text")
+  arenaScore  Float
+  ci95Lower   Float
+  ci95Upper   Float
+  votes       Int      @default(0)
+  license     String   @default("Unknown")
+  rank        Int
+  lastUpdated DateTime @default(now())
+  
+  @@unique([modelName, category])
+  @@index([category])
+  @@index([organization])
+  @@index([rank])
 }

@@ -5,6 +5,7 @@ import ErrorBoundary from '@/components/shared/ErrorBoundary'
 import LoadingSkeleton from '@/components/shared/LoadingSkeleton'
 import CommandPalette from '@/components/shared/CommandPalette'
 import BookmarksPanel from '@/components/shared/Bookmarks'
+import { AuthProvider } from '@/context/AuthContext'
 
 const ModelTracker = lazy(() => import('@/components/tabs/ModelTracker/ModelTracker'))
 const ModelDetail = lazy(() => import('@/components/tabs/ModelTracker/ModelDetail'))
@@ -33,27 +34,29 @@ function PageLoader() {
 export default function App() {
   return (
     <ErrorBoundary>
-      <CommandPalette />
-      <Routes>
-        <Route element={
-          <Suspense fallback={<PageLoader />}>
-            <AppShell />
-          </Suspense>
-        }>
-          <Route index element={<Navigate to="/models" replace />} />
-          <Route path="models" element={<ModelTracker />} />
-          <Route path="models/:modelId" element={<ModelDetail />} />
-          <Route path="benchmarks" element={<BenchmarkEngine />} />
-          <Route path="benchmarks/:benchmarkId" element={<BenchmarkDetail />} />
-          <Route path="leaderboard" element={<Leaderboard />} />
-          <Route path="compare" element={<ComparisonLab />} />
-          <Route path="guide" element={<SetupGuide />} />
-          <Route path="news" element={<NewsFeed />} />
-          <Route path="playground" element={<Playground />} />
-          <Route path="learn" element={<LearnHub />} />
-          <Route path="*" element={<Navigate to="/models" replace />} />
-        </Route>
-      </Routes>
+      <AuthProvider>
+        <CommandPalette />
+        <Routes>
+          <Route element={
+            <Suspense fallback={<PageLoader />}>
+              <AppShell />
+            </Suspense>
+          }>
+            <Route index element={<Navigate to="/playground" replace />} />
+            <Route path="playground" element={<Playground />} />
+            <Route path="models" element={<ModelTracker />} />
+            <Route path="models/:modelId" element={<ModelDetail />} />
+            <Route path="leaderboard" element={<Leaderboard />} />
+            <Route path="compare" element={<ComparisonLab />} />
+            <Route path="benchmarks" element={<BenchmarkEngine />} />
+            <Route path="benchmarks/:benchmarkId" element={<BenchmarkDetail />} />
+            <Route path="news" element={<NewsFeed />} />
+            <Route path="guide" element={<SetupGuide />} />
+            <Route path="learn" element={<LearnHub />} />
+            <Route path="*" element={<Navigate to="/playground" replace />} />
+          </Route>
+        </Routes>
+      </AuthProvider>
     </ErrorBoundary>
   )
 }

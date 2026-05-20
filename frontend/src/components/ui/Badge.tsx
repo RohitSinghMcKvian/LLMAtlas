@@ -1,12 +1,12 @@
-import type { MouseEventHandler, ReactNode } from "react";
+import type { MouseEventHandler, ReactNode } from "react"
 
 export interface BadgeProps {
-  children?: ReactNode;
-  key?: string | number;
-  variant?: "default" | "success" | "warning" | "danger" | "info" | "purple";
-  size?: "sm" | "md";
-  className?: string;
-  onClick?: MouseEventHandler<HTMLSpanElement>;
+  children?: ReactNode
+  key?: string | number
+  variant?: "default" | "success" | "warning" | "danger" | "info" | "purple"
+  size?: "sm" | "md"
+  className?: string
+  onClick?: MouseEventHandler<HTMLSpanElement>
 }
 
 const variantStyles: Record<NonNullable<BadgeProps["variant"]>, string> = {
@@ -22,12 +22,12 @@ const variantStyles: Record<NonNullable<BadgeProps["variant"]>, string> = {
     "bg-cyan-glow/8 text-cyan-glow border border-cyan-glow/15",
   purple:
     "bg-purple-glow/8 text-purple-glow border border-purple-glow/15",
-};
+}
 
 const sizeStyles: Record<NonNullable<BadgeProps["size"]>, string> = {
   sm: "px-1.5 py-0.5 text-[11px] leading-tight",
   md: "px-2.5 py-1 text-sm",
-};
+}
 
 export default function Badge({
   children,
@@ -36,7 +36,7 @@ export default function Badge({
   className = "",
   onClick,
 }: BadgeProps) {
-  const Tag = onClick ? "button" : "span";
+  const Tag = onClick ? "button" : "span"
   return (
     <Tag
       onClick={onClick}
@@ -44,5 +44,5 @@ export default function Badge({
     >
       {children}
     </Tag>
-  );
+  )
 }

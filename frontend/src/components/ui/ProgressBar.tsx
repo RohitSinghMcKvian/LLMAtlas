@@ -1,24 +1,24 @@
-import { motion } from "framer-motion";
+import { motion } from "framer-motion"
 
 export interface ProgressBarProps {
-  value: number;
-  label?: string;
-  showValue?: boolean;
-  size?: "sm" | "md" | "lg";
-  variant?: "accent" | "success" | "warning";
+  value: number
+  label?: string
+  showValue?: boolean
+  size?: "sm" | "md" | "lg"
+  variant?: "accent" | "success" | "warning"
 }
 
 const variantStyles: Record<NonNullable<ProgressBarProps["variant"]>, string> = {
   accent: "bg-gradient-to-r from-cyan-glow to-accent-500",
   success: "bg-success",
   warning: "bg-warning",
-};
+}
 
 const sizeStyles: Record<NonNullable<ProgressBarProps["size"]>, string> = {
   sm: "h-1.5",
   md: "h-2.5",
   lg: "h-3.5",
-};
+}
 
 export default function ProgressBar({
   value,
@@ -27,7 +27,7 @@ export default function ProgressBar({
   size = "md",
   variant = "accent",
 }: ProgressBarProps) {
-  const clamped = Math.max(0, Math.min(100, value));
+  const clamped = Math.max(0, Math.min(100, value))
 
   return (
     <div className="w-full">
@@ -56,5 +56,5 @@ export default function ProgressBar({
         />
       </div>
     </div>
-  );
+  )
 }

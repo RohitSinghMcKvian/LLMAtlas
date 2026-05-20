@@ -12,8 +12,6 @@ import {
   GraduationCap,
   X,
   Menu,
-  Sun,
-  Moon,
   Sparkles,
   type LucideIcon,
 } from 'lucide-react'
@@ -26,24 +24,22 @@ interface NavItem {
 }
 
 const navItems: NavItem[] = [
+  { label: 'Playground', path: '/playground', icon: Play },
   { label: 'Models', path: '/models', icon: Cpu },
-  { label: 'Benchmarks', path: '/benchmarks', icon: BarChart3 },
   { label: 'Leaderboard', path: '/leaderboard', icon: Trophy },
   { label: 'Compare', path: '/compare', icon: GitCompare },
-  { label: 'Guide', path: '/guide', icon: BookOpen },
+  { label: 'Benchmarks', path: '/benchmarks', icon: BarChart3 },
   { label: 'News', path: '/news', icon: Newspaper },
-  { label: 'Playground', path: '/playground', icon: Play },
+  { label: 'Guide', path: '/guide', icon: BookOpen },
   { label: 'Learn', path: '/learn', icon: GraduationCap },
 ]
 
 interface SidebarProps {
   isOpen: boolean
   onClose: () => void
-  isDark: boolean
-  onToggleTheme: () => void
 }
 
-export function Sidebar({ isOpen, onClose, isDark, onToggleTheme }: SidebarProps) {
+export function Sidebar({ isOpen, onClose }: SidebarProps) {
   const location = useLocation()
   const [activePath, setActivePath] = useState(location.pathname)
 
@@ -51,11 +47,11 @@ export function Sidebar({ isOpen, onClose, isDark, onToggleTheme }: SidebarProps
     setActivePath(location.pathname)
   }, [location.pathname])
 
-  const handleTouchStart = useCallback((e: TouchEvent) => {
+  const handleTouchStart = useCallback((e: React.TouchEvent<HTMLElement>) => {
     (e.target as HTMLElement).dataset.touchStartX = e.touches[0].clientX.toString()
   }, [])
 
-  const handleTouchEnd = useCallback((e: TouchEvent) => {
+  const handleTouchEnd = useCallback((e: React.TouchEvent<HTMLElement>) => {
     const startX = parseFloat((e.target as HTMLElement).dataset.touchStartX || '0')
     const endX = e.changedTouches[0].clientX
     if (endX - startX > 80) {
@@ -154,17 +150,7 @@ export function Sidebar({ isOpen, onClose, isDark, onToggleTheme }: SidebarProps
 
             {/* Footer */}
             <div className="p-4 border-t" style={{ borderColor: 'rgba(255, 255, 255, 0.06)' }}>
-              <button
-                onClick={onToggleTheme}
-                className="w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-medium text-gray-400 hover:bg-white/5 transition-colors"
-              >
-                <span className="flex items-center gap-3">
-                  {isDark ? <Sun size={18} /> : <Moon size={18} />}
-                  {isDark ? 'Light Mode' : 'Dark Mode'}
-                </span>
-              </button>
-              
-              <div className="mt-3 px-4 py-2 rounded-lg bg-white/5 text-xs text-gray-500">
+              <div className="px-4 py-2 rounded-lg bg-white/5 text-xs text-gray-500">
                 <p>Your compass in the universe of AI</p>
               </div>
             </div>

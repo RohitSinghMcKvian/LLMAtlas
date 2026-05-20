@@ -1,36 +1,54 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, ResponsiveContainer, Legend } from 'recharts'
 import { Search, X, Share2 } from 'lucide-react'
-import { models } from '@/data/models'
-import { benchmarkScores } from '@/data/benchmarks'
+import type { Model } from '@/types/model'
 import Badge from '@/components/ui/Badge'
 import Card from '@/components/ui/Card'
 import Button from '@/components/ui/Button'
+import api from '@/lib/api'
 
 const COLORS = ['#00e5ff', '#fb7185', '#10b981', '#f59e0b', '#c084fc', '#ec4899']
 
-const PRICING: Record<string, { input: number; output: number }> = {
-  'gpt-4o': { input: 2.5, output: 10 }, 'gpt-4-turbo': { input: 10, output: 30 }, 'o1': { input: 15, output: 60 },
-  'claude-3-5-sonnet': { input: 3, output: 15 }, 'claude-3-opus': { input: 15, output: 75 }, 'claude-3-haiku': { input: 0.8, output: 4 },
-  'gemini-2-flash': { input: 0.15, output: 0.6 }, 'gemini-1-5-pro': { input: 1.25, output: 5 },
-  'llama-3-3-70b': { input: 0.35, output: 0.5 }, 'llama-3-1-8b': { input: 0.06, output: 0.3 },
-  'deepseek-v3': { input: 0.27, output: 1.1 }, 'deepseek-r1': { input: 0.55, output: 2.19 },
-}
-
 export default function ComparisonLab() {
+  const [models, setModels] = useState<Model[]>([])
+  const [benchmarkData, setBenchmarkData] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
   const [selected, setSelected] = useState<string[]>([])
   const [search, setSearch] = useState('')
   const [useCase, setUseCase] = useState('')
   const [recommendation, setRecommendation] = useState('')
 
-  const availableModels = useMemo(() => models.filter(m => !selected.includes(m.id)).filter(m => !search || m.name.toLowerCase().includes(search.toLowerCase()) || m.organization.toLowerCase().includes(search.toLowerCase())), [selected, search])
+  useEffect(() => {
+    async function fetchData() {
+      setLoading(true)
+      try {
+        const [modelsData, benchmarksData] = await Promise.all([
+          api.getModels(),
+          api.getBenchmarks()
+        ])
+        setModels(modelsData)
+        setBenchmarkData(benchmarksData)
+      } catch (e) {
+        console.error('Failed to fetch comparison data:', e)
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchData()
+  }, [])
+
+  const availableModels = useMemo(() =>
+    models.filter(m => !selected.includes(m.id))
+      .filter(m => !search || m.name.toLowerCase().includes(search.toLowerCase()) || m.organization.toLowerCase().includes(search.toLowerCase())),
+    [selected, search, models]
+  )
 
   const radarData = useMemo(() => {
     if (selected.length < 2) return []
     const dims = ['coding', 'math', 'reasoning', 'instruction', 'vision', 'safety']
     const bmMap: Record<string, string[]> = {
-      humaneval: ['coding'], 'humaneval+': ['coding'], mbpp: ['coding'], 'swe-bench': ['coding'],
+      humaneval: ['coding'], 'humaneval+': ['coding'], 'humaneval-plus': ['coding'], mbpp: ['coding'], 'swe-bench-verified': ['coding'],
       math: ['math'], gsm8k: ['math'],
       mmlu: ['reasoning'], 'mmlu-pro': ['reasoning'], 'arc-challenge': ['reasoning'], hellaswag: ['reasoning'],
       'mt-bench': ['instruction'], 'alpacaeval-2': ['instruction'],
@@ -40,25 +58,39 @@ export default function ComparisonLab() {
     return dims.map(dim => {
       const obj: Record<string, number | string> = { dimension: dim }
       selected.forEach(mid => {
-        const scores = benchmarkScores.filter(s => s.modelId === mid && bmMap[s.benchmarkId]?.includes(dim))
-        obj[mid] = scores.length ? Math.round(scores.reduce((a, b) => a + b.score, 0) / scores.length) : 0
+        const scores = benchmarkData
+          .flatMap((b: any) => b.scores || [])
+          .filter((s: any) => s.modelId === mid && bmMap[s.benchmarkId]?.includes(dim))
+        obj[mid] = scores.length ? Math.round(scores.reduce((a: number, b: any) => a + b.score, 0) / scores.length) : 0
       })
       return obj
     }).filter(d => selected.some(mid => (d[mid] as number) > 0))
-  }, [selected])
+  }, [selected, benchmarkData])
 
   const addModel = (id: string) => { if (selected.length < 6) setSelected([...selected, id]); setSearch('') }
   const removeModel = (id: string) => setSelected(selected.filter(s => s !== id))
 
-  const handleUseCase = () => {
-    const q = useCase.toLowerCase()
-    let rec = ''
-    if (q.includes('coding') || q.includes('sql') || q.includes('programming')) rec = q.includes('16gb') || q.includes('free') ? 'Try Llama 3.3 70B or DeepSeek-V3 for coding tasks. Both are open-source and can run on consumer hardware with quantization.' : 'Claude 3.5 Sonnet is the best coding model. For open-source, DeepSeek-V3 or Qwen 2.5 72B are top choices.'
-    else if (q.includes('reasoning') || q.includes('math')) rec = 'o1 or DeepSeek-R1 are the top reasoning models. DeepSeek-R1 is open-source.'
-    else if (q.includes('vision') || q.includes('image')) rec = 'GPT-4o and Gemini 1.5 Pro have the best vision capabilities. Reka Core is also strong for multimodal tasks.'
-    else if (q.includes('fast') || q.includes('speed') || q.includes('latency')) rec = 'Gemini 2.0 Flash offers the best speed-to-performance ratio. Claude 3 Haiku is also very fast for lightweight tasks.'
-    else rec = `Based on "${useCase}" - GPT-4o is the best all-rounder. For open-source, Llama 3.3 70B or DeepSeek-V3 offer excellent performance.`
-    setRecommendation(rec)
+  const handleUseCase = async () => {
+    try {
+      const weights = { speed: 0.2, cost: 0.2, reasoning: 0.2, coding: 0.2, context: 0.1, multimodal: 0.1 }
+      const result = await api.recommendModels(useCase, weights)
+      if (result.recommendations?.length > 0) {
+        setRecommendation(`Top recommendation: ${result.recommendations[0].name} (score: ${result.recommendations[0].recommendationScore})`)
+      } else {
+        setRecommendation('No specific recommendation available. Try GPT-4o as an all-rounder.')
+      }
+    } catch {
+      setRecommendation('Unable to fetch recommendations. Try GPT-4o as an all-rounder.')
+    }
+  }
+
+  if (loading) {
+    return (
+      <div className="space-y-4 pt-8">
+        <div className="skeleton h-8 w-64" />
+        <div className="skeleton h-96" />
+      </div>
+    )
   }
 
   return (
@@ -118,8 +150,10 @@ export default function ComparisonLab() {
                 <thead><tr className="border-b border-surface-800"><th className="text-left py-2 px-3 text-surface-500">Model</th><th className="text-right py-2 px-3 text-surface-500">Input</th><th className="text-right py-2 px-3 text-surface-500">Output</th></tr></thead>
                 <tbody>{selected.map(mid => {
                   const m = models.find(x => x.id === mid)
-                  const p = PRICING[mid]
-                  return <tr key={mid} className="border-b border-surface-800/50"><td className="py-2 px-3 text-surface-100">{m?.name}</td><td className="py-2 px-3 text-right font-mono text-surface-400">{p ? `$${p.input}` : '-'}</td><td className="py-2 px-3 text-right font-mono text-surface-400">{p ? `$${p.output}` : '-'}</td></tr>
+                  const pricing = (m as any).pricing
+                  const inputPrice = (m as any).pricingInput
+                  const outputPrice = (m as any).pricingOutput
+                  return <tr key={mid} className="border-b border-surface-800/50"><td className="py-2 px-3 text-surface-100">{m?.name}</td><td className="py-2 px-3 text-right font-mono text-surface-400">{inputPrice ? `$${inputPrice}` : (pricing ? pricing.split('/')[0]?.replace('$', '') : '-')}</td><td className="py-2 px-3 text-right font-mono text-surface-400">{outputPrice ? `$${outputPrice}` : (pricing ? pricing.split('/')[1]?.trim().split(' ')[0]?.replace('$', '') : '-')}</td></tr>
                 })}</tbody>
               </table>
             </div>

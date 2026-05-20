@@ -4,7 +4,17 @@ import { PrismaClient } from '@prisma/client'
 const router = Router()
 const prisma = new PrismaClient()
 
-// Get all models with filtering
+function parseModelArrays(m: any) {
+  return {
+    ...m,
+    modalitiesInput: (() => { try { return JSON.parse(m.modalitiesInput) } catch { return [] } })(),
+    modalitiesOutput: (() => { try { return JSON.parse(m.modalitiesOutput) } catch { return [] } })(),
+    strengths: (() => { try { return JSON.parse(m.strengths) } catch { return [] } })(),
+    hfTags: (() => { try { return JSON.parse(m.hfTags) } catch { return [] } })(),
+    quantizationFormats: (() => { try { return JSON.parse(m.quantizationFormats) } catch { return [] } })(),
+  }
+}
+
 router.get('/', async (req, res) => {
   try {
     const { license, status, org, search, sort, order } = req.query
@@ -16,9 +26,10 @@ router.get('/', async (req, res) => {
     if (org) where.organization = org as string
     
     if (search) {
+      const s = search as string
       where.OR = [
-        { name: { contains: search as string, mode: 'insensitive' } },
-        { organization: { contains: search as string, mode: 'insensitive' } },
+        { name: { contains: s } },
+        { organization: { contains: s } },
       ]
     }
 
@@ -39,14 +50,13 @@ router.get('/', async (req, res) => {
       }
     })
 
-    res.json(models)
+    res.json(models.map(parseModelArrays))
   } catch (error) {
     console.error('Error fetching models:', error)
     res.status(500).json({ error: 'Failed to fetch models' })
   }
 })
 
-// Get single model by ID
 router.get('/:id', async (req, res) => {
   try {
     const model = await prisma.model.findUnique({
@@ -65,14 +75,13 @@ router.get('/:id', async (req, res) => {
       return res.status(404).json({ error: 'Model not found' })
     }
 
-    res.json(model)
+    res.json(parseModelArrays(model))
   } catch (error) {
     console.error('Error fetching model:', error)
     res.status(500).json({ error: 'Failed to fetch model' })
   }
 })
 
-// Get organizations
 router.get('/meta/organizations', async (req, res) => {
   try {
     const orgs = await prisma.model.findMany({

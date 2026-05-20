@@ -1,11 +1,11 @@
-import type { ReactNode } from "react";
-import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import type { ReactNode } from "react"
+import { useState } from "react"
+import { motion, AnimatePresence } from "framer-motion"
 
 export interface TooltipProps {
-  content: string;
-  children: ReactNode;
-  position?: "top" | "bottom" | "left" | "right";
+  content: string
+  children: ReactNode
+  position?: "top" | "bottom" | "left" | "right"
 }
 
 const positionStyles: Record<NonNullable<TooltipProps["position"]>, string> = {
@@ -13,14 +13,14 @@ const positionStyles: Record<NonNullable<TooltipProps["position"]>, string> = {
   bottom: "top-full left-1/2 -translate-x-1/2 mt-2",
   left: "right-full top-1/2 -translate-y-1/2 mr-2",
   right: "left-full top-1/2 -translate-y-1/2 ml-2",
-};
+}
 
 export default function Tooltip({
   content,
   children,
   position = "top",
 }: TooltipProps) {
-  const [visible, setVisible] = useState(false);
+  const [visible, setVisible] = useState(false)
 
   return (
     <div
@@ -45,5 +45,5 @@ export default function Tooltip({
         )}
       </AnimatePresence>
     </div>
-  );
+  )
 }

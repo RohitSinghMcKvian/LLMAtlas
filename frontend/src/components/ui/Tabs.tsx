@@ -1,18 +1,18 @@
-import type { ReactNode } from "react";
-import { motion } from "framer-motion";
-import type { LucideIcon } from "lucide-react";
+import type { ReactNode } from "react"
+import { motion } from "framer-motion"
+import type { LucideIcon } from "lucide-react"
 
 export interface Tab {
-  id: string;
-  label: string;
-  icon?: LucideIcon;
+  id: string
+  label: string
+  icon?: LucideIcon
 }
 
 export interface TabsProps {
-  tabs: Tab[];
-  activeTab: string;
-  onChange: (id: string) => void;
-  children: ReactNode;
+  tabs: Tab[]
+  activeTab: string
+  onChange: (id: string) => void
+  children: ReactNode
 }
 
 export default function Tabs({
@@ -25,8 +25,8 @@ export default function Tabs({
     <div>
       <div className="flex border-b border-surface-800 overflow-x-auto scrollbar-thin">
         {tabs.map((tab) => {
-          const Icon = tab.icon;
-          const isActive = activeTab === tab.id;
+          const Icon = tab.icon
+          const isActive = activeTab === tab.id
           return (
             <button
               key={tab.id}
@@ -49,10 +49,10 @@ export default function Tabs({
                 />
               )}
             </button>
-          );
+          )
         })}
       </div>
       <div className="pt-4">{children}</div>
     </div>
-  );
+  )
 }

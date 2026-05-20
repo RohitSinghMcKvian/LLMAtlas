@@ -1,13 +1,13 @@
-import type { ReactNode } from "react";
-import { Loader2 } from "lucide-react";
+import type { ReactNode } from "react"
+import { Loader2 } from "lucide-react"
 
 export interface ChartWrapperProps {
-  title: string;
-  subtitle?: string;
-  children: ReactNode;
-  height?: number;
-  loading?: boolean;
-  className?: string;
+  title: string
+  subtitle?: string
+  children: ReactNode
+  height?: number
+  loading?: boolean
+  className?: string
 }
 
 export default function ChartWrapper({
@@ -42,5 +42,5 @@ export default function ChartWrapper({
         )}
       </div>
     </div>
-  );
+  )
 }

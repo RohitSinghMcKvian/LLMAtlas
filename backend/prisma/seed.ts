@@ -147,7 +147,6 @@ const benchmarkScores = [
 async function main() {
   console.log('Starting seed...')
   
-  // Clear existing data
   await prisma.benchmarkScore.deleteMany()
   await prisma.modelVersion.deleteMany()
   await prisma.model.deleteMany()
@@ -162,7 +161,11 @@ async function main() {
   
   console.log('Creating models...')
   for (const m of models) {
-    await prisma.model.create({ data: m })
+    const modelData: any = { ...m }
+    if (m.modalitiesInput) modelData.modalitiesInput = JSON.stringify(m.modalitiesInput)
+    if (m.modalitiesOutput) modelData.modalitiesOutput = JSON.stringify(m.modalitiesOutput)
+    if (m.strengths) modelData.strengths = JSON.stringify(m.strengths)
+    await prisma.model.create({ data: modelData })
   }
   
   console.log('Creating benchmark scores...')
@@ -170,14 +173,13 @@ async function main() {
     await prisma.benchmarkScore.create({ data: s })
   }
   
-  // Create some sample news items
   console.log('Creating news items...')
   const newsItems = [
-    { title: 'OpenAI Announces GPT-5 with Full Multimodal Capabilities', summary: 'OpenAI has announced GPT-5, featuring native multimodal understanding with text, vision, audio, and video. Expected release in Q3 2025.', source: 'OpenAI Blog', tags: ['New Model', 'Product Launch'], url: 'https://openai.com/blog' },
-    { title: 'Claude Opus 4.7 Sets New Benchmark Records', summary: 'Anthropic\'s latest flagship model achieves state-of-the-art results on MMLU, GPQA, and mathematical reasoning benchmarks.', source: 'Anthropic', tags: ['New Model', 'Benchmark'], url: 'https://anthropic.com' },
-    { title: 'DeepSeek Releases Open-Source V4 Pro Model', summary: 'DeepSeek releases V4 Pro under MIT license, achieving GPT-4 level performance at a fraction of the cost.', source: 'DeepSeek', tags: ['New Model', 'Open Source'], url: 'https://deepseek.com' },
-    { title: 'Meta AI Unveils Llama 4 with 10M Context Window', summary: 'Meta introduces Llama 4 Scout with unprecedented 10M token context window for open-source models.', source: 'Meta AI', tags: ['New Model', 'Open Source'], url: 'https://ai.meta.com' },
-    { title: 'Google Gemini 3.1 Pro Now Available with 2M Context', summary: 'Google DeepMind releases Gemini 3.1 Pro with 2M token context and native multimodal reasoning.', source: 'Google', tags: ['New Model', 'Product Launch'], url: 'https://deepmind.google' },
+    { title: 'OpenAI Announces GPT-5 with Full Multimodal Capabilities', summary: 'OpenAI has announced GPT-5, featuring native multimodal understanding with text, vision, audio, and video. Expected release in Q3 2025.', source: 'OpenAI Blog', tags: JSON.stringify(['New Model', 'Product Launch']), url: 'https://openai.com/blog' },
+    { title: 'Claude Opus 4.7 Sets New Benchmark Records', summary: 'Anthropic\'s latest flagship model achieves state-of-the-art results on MMLU, GPQA, and mathematical reasoning benchmarks.', source: 'Anthropic', tags: JSON.stringify(['New Model', 'Benchmark']), url: 'https://anthropic.com' },
+    { title: 'DeepSeek Releases Open-Source V4 Pro Model', summary: 'DeepSeek releases V4 Pro under MIT license, achieving GPT-4 level performance at a fraction of the cost.', source: 'DeepSeek', tags: JSON.stringify(['New Model', 'Open Source']), url: 'https://deepseek.com' },
+    { title: 'Meta AI Unveils Llama 4 with 10M Context Window', summary: 'Meta introduces Llama 4 Scout with unprecedented 10M token context window for open-source models.', source: 'Meta AI', tags: JSON.stringify(['New Model', 'Open Source']), url: 'https://ai.meta.com' },
+    { title: 'Google Gemini 3.1 Pro Now Available with 2M Context', summary: 'Google DeepMind releases Gemini 3.1 Pro with 2M token context and native multimodal reasoning.', source: 'Google', tags: JSON.stringify(['New Model', 'Product Launch']), url: 'https://deepmind.google' },
   ]
   for (const n of newsItems) {
     await prisma.newsItem.create({ data: { ...n, publishedAt: new Date() } })

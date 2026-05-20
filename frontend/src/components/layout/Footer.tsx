@@ -66,11 +66,11 @@ export default function Footer() {
             <h4 className="text-xs font-semibold text-surface-300 mb-3 uppercase tracking-wider">Explore</h4>
             <ul className="space-y-2">
               {[
+                { label: 'Playground', path: '/playground' },
                 { label: 'Model Tracker', path: '/models' },
-                { label: 'Benchmarks', path: '/benchmarks' },
                 { label: 'Leaderboard', path: '/leaderboard' },
                 { label: 'Comparison', path: '/compare' },
-                { label: 'Setup Guide', path: '/guide' },
+                { label: 'Benchmarks', path: '/benchmarks' },
               ].map((item) => (
                 <li key={item.path}>
                   <Link
@@ -90,9 +90,9 @@ export default function Footer() {
             <h4 className="text-xs font-semibold text-surface-300 mb-3 uppercase tracking-wider">Resources</h4>
             <ul className="space-y-2">
               {[
-                { label: 'Learn Hub', path: '/learn' },
                 { label: 'News Feed', path: '/news' },
-                { label: 'Playground', path: '/playground' },
+                { label: 'Setup Guide', path: '/guide' },
+                { label: 'Learn Hub', path: '/learn' },
               ].map((item) => (
                 <li key={item.path}>
                   <Link

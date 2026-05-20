@@ -3,7 +3,7 @@ import { useParams, Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { 
   ArrowLeft, ExternalLink, Copy, Bookmark, GitCompare, Cpu, Globe, Database, 
-  Code, Zap, Brain, BookOpen, Terminal, Download, 
+  Code, Zap, Brain, BookOpen, Terminal, Download, Heart, Tag,
   CheckCircle, AlertCircle, Calculator
 } from 'lucide-react'
 import api from '@/lib/api'
@@ -177,10 +177,45 @@ export default function ModelDetail() {
               <SpecRow label="VRAM (Q4)" value={model.vramQ4 || 'N/A'} />
               <SpecRow label="Self-Hostable" value={model.selfHostable ? 'Yes' : 'No'} />
               {model.apiEndpoint && <SpecRow label="API Endpoint" value={model.apiEndpoint} />}
+              {(model as any).pricingInput !== undefined && (model as any).pricingInput > 0 && (
+                <SpecRow label="Pricing (Input/Output)" value={`$${(model as any).pricingInput}/$${(model as any).pricingOutput} per 1M tokens`} />
+              )}
+              {(model as any).hfDownloads > 0 && (
+                <div className="flex justify-between py-2 border-b border-surface-800/50">
+                  <span className="text-surface-500 flex items-center gap-1"><Download size={14} />HF Downloads</span>
+                  <span className="text-surface-200 font-medium">{(model as any).hfDownloads.toLocaleString()}</span>
+                </div>
+              )}
+              {(model as any).hfLikes > 0 && (
+                <div className="flex justify-between py-2 border-b border-surface-800/50">
+                  <span className="text-surface-500 flex items-center gap-1"><Heart size={14} />HF Likes</span>
+                  <span className="text-surface-200 font-medium">{(model as any).hfLikes.toLocaleString()}</span>
+                </div>
+              )}
+              {(model as any).libraryName && (
+                <SpecRow label="Library" value={(model as any).libraryName} />
+              )}
+              {(model as any).pipelineTag && (
+                <SpecRow label="Pipeline" value={(model as any).pipelineTag} />
+              )}
               {model.huggingfaceRepo && <SpecRow label="HuggingFace" value={model.huggingfaceRepo} />}
               {model.github && <SpecRow label="GitHub" value={model.github} />}
             </div>
           </Card>
+
+          {(model as any).hfTags && (model as any).hfTags.length > 0 && (
+            <Card className="mb-6">
+              <h3 className="text-lg font-semibold text-surface-200 mb-4 flex items-center gap-2">
+                <Tag size={18} className="text-cyan-glow" />
+                Hugging Face Tags
+              </h3>
+              <div className="flex flex-wrap gap-2">
+                {(model as any).hfTags.map((tag: string) => (
+                  <Badge key={tag} variant="default" size="sm">{tag}</Badge>
+                ))}
+              </div>
+            </Card>
+          )}
 
           {model.strengths && model.strengths.length > 0 && (
             <Card>

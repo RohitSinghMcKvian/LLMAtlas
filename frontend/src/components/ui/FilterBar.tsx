@@ -1,23 +1,23 @@
-import { useState, useRef, useEffect } from "react";
-import { ChevronDown, X, RotateCcw, Search } from "lucide-react";
+import { useState, useRef, useEffect } from "react"
+import { ChevronDown, X, RotateCcw, Search } from "lucide-react"
 
 interface FilterOption {
-  value: string;
-  label: string;
+  value: string
+  label: string
 }
 
 interface Filter {
-  label: string;
-  options: FilterOption[];
-  selected: string[];
-  onChange: (values: string[]) => void;
+  label: string
+  options: FilterOption[]
+  selected: string[]
+  onChange: (values: string[]) => void
 }
 
 export interface FilterBarProps {
-  filters: Filter[];
-  onReset: () => void;
-  className?: string;
-  key?: string | number;
+  filters: Filter[]
+  onReset: () => void
+  className?: string
+  key?: string | number
 }
 
 export default function FilterBar({
@@ -42,29 +42,29 @@ export default function FilterBar({
         </button>
       )}
     </div>
-  );
+  )
 }
 
 function FilterDropdown({ filter, key: _key }: { filter: Filter; key?: string | number }) {
-  const [open, setOpen] = useState(false);
-  const ref = useRef<HTMLDivElement>(null);
+  const [open, setOpen] = useState(false)
+  const ref = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
       if (ref.current && !ref.current.contains(e.target as Node)) {
-        setOpen(false);
+        setOpen(false)
       }
     }
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+    document.addEventListener("mousedown", handleClickOutside)
+    return () => document.removeEventListener("mousedown", handleClickOutside)
+  }, [])
 
   const toggleOption = (value: string) => {
     const next = filter.selected.includes(value)
       ? filter.selected.filter((v) => v !== value)
-      : [...filter.selected, value];
-    filter.onChange(next);
-  };
+      : [...filter.selected, value]
+    filter.onChange(next)
+  }
 
   return (
     <div ref={ref} className="relative">
@@ -92,7 +92,7 @@ function FilterDropdown({ filter, key: _key }: { filter: Filter; key?: string | 
         <div className="absolute left-0 top-full z-20 mt-1 w-48 rounded-lg glass-strong shadow-xl">
           <div className="max-h-48 overflow-y-auto p-1 scrollbar-thin">
             {filter.options.map((opt) => {
-              const isSelected = filter.selected.includes(opt.value);
+              const isSelected = filter.selected.includes(opt.value)
               return (
                 <button
                   key={opt.value}
@@ -108,7 +108,7 @@ function FilterDropdown({ filter, key: _key }: { filter: Filter; key?: string | 
                     <span className="ml-2 h-2 w-2 rounded-full bg-cyan-glow" />
                   )}
                 </button>
-              );
+              )
             })}
           </div>
         </div>
@@ -124,8 +124,8 @@ function FilterDropdown({ filter, key: _key }: { filter: Filter; key?: string | 
               {filter.options.find((o) => o.value === val)?.label ?? val}
               <button
                 onClick={(e) => {
-                  e.stopPropagation();
-                  toggleOption(val);
+                  e.stopPropagation()
+                  toggleOption(val)
                 }}
                 className="ml-0.5 rounded-full p-0.5 hover:bg-surface-700 transition-colors"
               >
@@ -136,5 +136,5 @@ function FilterDropdown({ filter, key: _key }: { filter: Filter; key?: string | 
         </div>
       )}
     </div>
-  );
+  )
 }

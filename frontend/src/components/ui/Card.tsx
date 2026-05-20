@@ -1,12 +1,12 @@
-import type { MouseEventHandler, ReactNode } from "react";
-import { motion } from "framer-motion";
+import type { MouseEventHandler, ReactNode } from "react"
+import { motion } from "framer-motion"
 
 export interface CardProps {
-  children?: ReactNode;
-  key?: string | number;
-  className?: string;
-  onClick?: MouseEventHandler<HTMLDivElement>;
-  hoverable?: boolean;
+  children?: ReactNode
+  key?: string | number
+  className?: string
+  onClick?: MouseEventHandler<HTMLDivElement>
+  hoverable?: boolean
 }
 
 export default function Card({
@@ -24,5 +24,5 @@ export default function Card({
     >
       {children}
     </motion.div>
-  );
+  )
 }

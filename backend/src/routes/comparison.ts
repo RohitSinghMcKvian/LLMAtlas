@@ -40,7 +40,7 @@ router.post('/compare', async (req, res) => {
 
     // Calculate composite scores per model (simple average)
     const composite: Record<string, number> = {}
-    modelIds.forEach(id => {
+    modelIds.forEach((id: string) => {
       const modelScores = scores.filter(s => s.modelId === id)
       if (modelScores.length > 0) {
         const avg = modelScores.reduce((sum, s) => sum + s.score, 0) / modelScores.length
@@ -75,13 +75,20 @@ router.post('/recommend', async (req, res) => {
     const scored = models.map(model => {
       let score = 0
       
+      const strengths: string[] = (() => {
+        try { return JSON.parse(model.strengths) } catch { return [] }
+      })()
+      const modalitiesInput: string[] = (() => {
+        try { return JSON.parse(model.modalitiesInput) } catch { return [] }
+      })()
+      
       // Weight factors
       if (weights?.speed) score += model.contextWindow > 100000 ? 30 : 10
       if (weights?.cost) score += model.isOpenSource ? 40 : 20
-      if (weights?.reasoning) score += model.strengths?.some(s => s.toLowerCase().includes('reason')) ? 50 : 20
-      if (weights?.coding) score += model.strengths?.some(s => s.toLowerCase().includes('code')) ? 50 : 20
+      if (weights?.reasoning) score += strengths.some(s => s.toLowerCase().includes('reason')) ? 50 : 20
+      if (weights?.coding) score += strengths.some(s => s.toLowerCase().includes('code')) ? 50 : 20
       if (weights?.context) score += model.contextWindow > 100000 ? 50 : 20
-      if (weights?.multimodal) score += model.modalitiesInput?.length > 1 ? 50 : 20
+      if (weights?.multimodal) score += modalitiesInput.length > 1 ? 50 : 20
 
       return { ...model, recommendationScore: score }
     })
