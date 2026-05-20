@@ -7,6 +7,7 @@ import useTextToSpeech from '@/hooks/useTextToSpeech'
 import ErrorBoundary from './ErrorBoundary'
 
 interface ResponseCardProps {
+  key?: string | number
   modelId: string
   modelName: string
   provider: string

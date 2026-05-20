@@ -87,7 +87,7 @@ export default function PromptInput({
     e.stopPropagation()
     setIsDragOver(false)
     
-    const files = Array.from(e.dataTransfer.files)
+    const files = Array.from(e.dataTransfer.files) as File[]
     if (files.length > 0) {
       onFilesSelected(files)
     }

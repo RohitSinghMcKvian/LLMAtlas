@@ -3,6 +3,7 @@ import { BlockMath, InlineMath } from 'react-katex'
 import { motion } from 'framer-motion'
 
 interface KaTeXRendererProps {
+  key?: string | number
   math: string
   inline?: boolean
 }
