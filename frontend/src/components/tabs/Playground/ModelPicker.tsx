@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback, useEffect, useRef } from 'react'
+import { useState, useMemo, useCallback, useEffect, useRef, type KeyboardEvent } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { 
   Search, X, Check, Zap, Brain, Code, Eye, 
@@ -207,7 +207,7 @@ export default function ModelPicker({ models, selectedModels, onToggle, onSelect
     onClose()
   }
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
+  const handleKeyDown = (e: KeyboardEvent) => {
     const visibleModels = filteredModels
     if (!visibleModels.length) return
 

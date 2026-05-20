@@ -19,6 +19,20 @@ export interface Benchmark {
   higherIsBetter: boolean
   scaleMin: number
   scaleMax: number
+  methodologyUrl?: string
+  scoreType?: string
+  sourceUrl?: string
+  scores?: Array<{
+    modelId: string
+    score: number
+    model?: {
+      id: string
+      name: string
+      organization: string
+    }
+  }>
+  createdAt?: string
+  updatedAt?: string
 }
 
 export interface BenchmarkScore {
